@@ -116,6 +116,8 @@
       yewtube
       git
       libreoffice-fresh
+      gnupg
+      pinentry-gnome
     ];
   };
 
