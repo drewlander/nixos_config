@@ -95,8 +95,6 @@
     packages = with pkgs; [
       firefox
       thunderbird
-      evolution
-      evolution-ews
       brave
       librewolf
       chromium
@@ -117,6 +115,7 @@
       mpv
       yewtube
       git
+      libreoffice-fresh
     ];
   };
 
@@ -178,5 +177,19 @@
   dates = "weekly";
   options = "--delete-older-than 30d";
 };
-services.udev.packages = with pkgs; [ gnome.gnome-settings-daemon xdg-desktop-portal xdg-desktop-portal-gtk xdg-desktop-portal-gnome git];
+services.udev.packages = with pkgs; [ gnome.gnome-settings-daemon xdg-desktop-portal xdg-desktop-portal-gtk xdg-desktop-portal-gnome git x264 ffmpeg_6-full];
+
+nixpkgs.config.packageOverrides = pkgs: {
+    vaapiIntel = pkgs.vaapiIntel.override { enableHybridCodec = true; };
+  };
+  hardware.opengl = {
+    enable = true;
+    extraPackages = with pkgs; [
+      intel-media-driver # LIBVA_DRIVER_NAME=iHD
+      vaapiIntel         # LIBVA_DRIVER_NAME=i965 (older but works better for Firefox/Chromium)
+      vaapiVdpau
+      libvdpau-va-gl
+    ];
+  };
+
 }
