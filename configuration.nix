@@ -118,6 +118,7 @@
       libreoffice-fresh
       gnupg
       pinentry-gnome
+      pandoc
     ];
   };
 
