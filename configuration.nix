@@ -19,11 +19,7 @@
     "/crypto_keyfile.bin" = null;
   };
 
-  # Enable swap on luks
-  boot.initrd.luks.devices."luks-4ac781e0-586f-4d6e-850e-7938e76a95df".device = "/dev/disk/by-uuid/4ac781e0-586f-4d6e-850e-7938e76a95df";
-  boot.initrd.luks.devices."luks-4ac781e0-586f-4d6e-850e-7938e76a95df".keyFile = "/crypto_keyfile.bin";
-
-  networking.hostName = "host"; # Define your hostname.
+  networking.hostName = "nixos"; # Define your hostname.
   # networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.
 
   # Configure network proxy if necessary
@@ -119,18 +115,53 @@
       gnupg
       pinentry-gnome
       pandoc
+      xiphos
+    #  thunderbird
     ];
   };
 
   # Allow unfree packages
   nixpkgs.config.allowUnfree = true;
+  virtualisation.libvirtd.enable = true;
+  programs.dconf.enable = true;
 
   # List packages installed in system profile. To search, run:
   # $ nix search wget
-  #environment.systemPackages = with pkgs; [
+  environment.systemPackages = with pkgs; [
   #  vim # Do not forget to add an editor to edit configuration.nix! The Nano editor is also installed by default.
   #  wget
-  #];
+  virt-manager 
+  emacs 
+  zsh 
+  neovim
+  ntfs3g
+  gnomeExtensions.dash-to-dock
+  gnomeExtensions.appindicator
+  gnomeExtensions.caffeine
+  gnomeExtensions.openweather
+  x264 
+  ffmpeg_6-full
+  gnome.gnome-settings-daemon 
+  xdg-desktop-portal 
+  xdg-desktop-portal-gtk
+  ];
+nix.gc = {
+  automatic = true;
+  dates = "weekly";
+  options = "--delete-older-than 30d";
+};
+nixpkgs.config.packageOverrides = pkgs: {
+    vaapiIntel = pkgs.vaapiIntel.override { enableHybridCodec = true; };
+  };
+  hardware.opengl = {
+    enable = true;
+    extraPackages = with pkgs; [
+      intel-media-driver # LIBVA_DRIVER_NAME=iHD
+      vaapiIntel         # LIBVA_DRIVER_NAME=i965 (older but works better for Firefox/Chromium)
+      vaapiVdpau
+      libvdpau-va-gl
+    ];
+  };
 
   # Some programs need SUID wrappers, can be configured further or are
   # started in user sessions.
@@ -158,41 +189,6 @@
   # Before changing this value read the documentation for this option
   # (e.g. man configuration.nix or on https://nixos.org/nixos/options.html).
   system.stateVersion = "23.05"; # Did you read the comment?
-  virtualisation.libvirtd.enable = true;
-  programs.dconf.enable = true;
-  environment.systemPackages = with pkgs; [ 
-  virt-manager 
-  emacs 
-  zsh 
-  neovim
-  ntfs3g
-  gnomeExtensions.dash-to-dock
-  gnomeExtensions.appindicator
-  gnomeExtensions.caffeine
-  gnomeExtensions.openweather
-  xiphos
-  ];
-  services.flatpak.enable = true;
-
-  boot.kernelPackages = pkgs.linuxPackages_latest;
-  nix.gc = {
-  automatic = true;
-  dates = "weekly";
-  options = "--delete-older-than 30d";
-};
-services.udev.packages = with pkgs; [ gnome.gnome-settings-daemon xdg-desktop-portal xdg-desktop-portal-gtk xdg-desktop-portal-gnome git x264 ffmpeg_6-full];
-
-nixpkgs.config.packageOverrides = pkgs: {
-    vaapiIntel = pkgs.vaapiIntel.override { enableHybridCodec = true; };
-  };
-  hardware.opengl = {
-    enable = true;
-    extraPackages = with pkgs; [
-      intel-media-driver # LIBVA_DRIVER_NAME=iHD
-      vaapiIntel         # LIBVA_DRIVER_NAME=i965 (older but works better for Firefox/Chromium)
-      vaapiVdpau
-      libvdpau-va-gl
-    ];
-  };
+    boot.kernelPackages = pkgs.linuxPackages_latest;
 
 }
