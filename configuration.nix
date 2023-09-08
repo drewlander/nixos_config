@@ -63,6 +63,7 @@
 
   # Enable CUPS to print documents.
   services.printing.enable = true;
+  services.printing.drivers = [ pkgs.hplip pkgs.brlaser ];
 
   # Enable sound with pipewire.
   sound.enable = true;
@@ -196,6 +197,6 @@ services.flatpak.enable = true;
 home-manager.users.user = { pkgs, ... }: {
   home.packages = [  ];
   home.stateVersion = "23.05"; 
-  dconf.settings."org/gnome/desktop/wm/preferences".button-layout = "minimize,maximize,close";
+  dconf.settings."org/gnome/desktop/wm/preferences".button-layout = ":minimize,maximize,close";
   };
 }
