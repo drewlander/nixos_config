@@ -117,13 +117,13 @@
       pinentry-gnome
       pandoc
       xiphos
-    #  thunderbird
     ];
   };
 
   # Allow unfree packages
   nixpkgs.config.allowUnfree = true;
   virtualisation.libvirtd.enable = true;
+  virtualisation.spiceUSBRedirection.enable = true;
   programs.dconf.enable = true;
 
   # List packages installed in system profile. To search, run:
@@ -191,7 +191,8 @@ nixpkgs.config.packageOverrides = pkgs: {
   # (e.g. man configuration.nix or on https://nixos.org/nixos/options.html).
   system.stateVersion = "23.05"; # Did you read the comment?
     boot.kernelPackages = pkgs.linuxPackages_latest;
-
+services.flatpak.enable = true;
+    
 home-manager.users.user = { pkgs, ... }: {
   home.packages = [  ];
   home.stateVersion = "23.05"; 
