@@ -8,6 +8,7 @@
   imports =
     [ # Include the results of the hardware scan.
       ./hardware-configuration.nix
+      <home-manager/nixos>
     ];
 
   # Bootloader.
@@ -191,4 +192,9 @@ nixpkgs.config.packageOverrides = pkgs: {
   system.stateVersion = "23.05"; # Did you read the comment?
     boot.kernelPackages = pkgs.linuxPackages_latest;
 
+home-manager.users.user = { pkgs, ... }: {
+  home.packages = [  ];
+  home.stateVersion = "23.05"; 
+  dconf.settings."org/gnome/desktop/wm/preferences".button-layout = "minimize,maximize,close";
+  };
 }
