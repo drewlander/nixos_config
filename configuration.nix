@@ -89,7 +89,7 @@
   users.users.user = {
     isNormalUser = true;
     description = "user";
-    extraGroups = [ "networkmanager" "wheel" "kvm" "libvirt"];
+    extraGroups = [ "networkmanager" "wheel" "kvm" "libvirtd"];
     packages = with pkgs; [
       firefox
       thunderbird
@@ -118,12 +118,14 @@
       pinentry-gnome
       pandoc
       xiphos
+      keepassxc
     ];
   };
 
   # Allow unfree packages
   nixpkgs.config.allowUnfree = true;
   virtualisation.libvirtd.enable = true;
+  virtualisation.libvirtd.qemu.ovmf.enable = true;
   virtualisation.spiceUSBRedirection.enable = true;
   programs.dconf.enable = true;
 
@@ -133,7 +135,7 @@
   #  vim # Do not forget to add an editor to edit configuration.nix! The Nano editor is also installed by default.
   #  wget
   virt-manager 
-  emacs 
+  emacs29-pgtk
   zsh 
   neovim
   ntfs3g
@@ -191,9 +193,19 @@ nixpkgs.config.packageOverrides = pkgs: {
   # Before changing this value read the documentation for this option
   # (e.g. man configuration.nix or on https://nixos.org/nixos/options.html).
   system.stateVersion = "23.05"; # Did you read the comment?
-    boot.kernelPackages = pkgs.linuxPackages_latest;
-services.flatpak.enable = true;
-    
+   boot.kernelPackages = pkgs.linuxPackages_hardened;
+   services.flatpak.enable = true;
+   security.apparmor.enable = true;
+   security.chromiumSuidSandbox.enable = true;
+     networking.firewall.allowedTCPPorts = [];
+  networking.firewall.allowedUDPPorts = [];
+
+programs.gnupg.agent = {                                                      
+  enable = true;
+  enableSSHSupport = true;
+  pinentryFlavor = "gnome3";
+};
+
 home-manager.users.user = { pkgs, ... }: {
   home.packages = [  ];
   home.stateVersion = "23.05"; 
