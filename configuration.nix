@@ -7,20 +7,17 @@
 {
   imports =
     [ # Include the results of the hardware scan.
-      ./hardware-configuration.nix
       <home-manager/nixos>
+      ./hardware-configuration.nix
+      ./local_config.nix
+      ./home.nix
     ];
 
   # Bootloader.
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
 
-  # Setup keyfile
-  boot.initrd.secrets = {
-    "/crypto_keyfile.bin" = null;
-  };
-
-  networking.hostName = "nixos"; # Define your hostname.
+  networking.hostName = "host"; # Define your hostname.
   # networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.
 
   # Configure network proxy if necessary
@@ -51,9 +48,9 @@
   # Enable the X11 windowing system.
   services.xserver.enable = true;
 
-  # Enable the GNOME Desktop Environment.
-  services.xserver.displayManager.gdm.enable = true;
-  services.xserver.desktopManager.gnome.enable = true;
+  # Enable the KDE Plasma Desktop Environment.
+  services.xserver.displayManager.sddm.enable = true;
+  services.xserver.desktopManager.plasma5.enable = true;
 
   # Configure keymap in X11
   services.xserver = {
@@ -63,7 +60,6 @@
 
   # Enable CUPS to print documents.
   services.printing.enable = true;
-  services.printing.drivers = [ pkgs.hplip pkgs.brlaser ];
 
   # Enable sound with pipewire.
   sound.enable = true;
@@ -92,80 +88,24 @@
     extraGroups = [ "networkmanager" "wheel" "kvm" "libvirtd"];
     packages = with pkgs; [
       firefox
-      thunderbird
-      brave
-      librewolf
-      chromium
-      telegram-desktop
-      flatpak
-      gnome.gnome-software
-      vscode
+      kate
       gopls
       go
       rustup
       clang
-      jdk11
-      i2p
-      nextcloud-client
-      audacious
-      audacious-plugins
-      vlc
-      mpv
-      yewtube
-      git
-      libreoffice-fresh
-      gnupg
-      pinentry-gnome
-      pandoc
-      xiphos
-      keepassxc
+    #  thunderbird
     ];
   };
 
   # Allow unfree packages
   nixpkgs.config.allowUnfree = true;
-  virtualisation.libvirtd.enable = true;
-  virtualisation.libvirtd.qemu.ovmf.enable = true;
-  virtualisation.spiceUSBRedirection.enable = true;
-  programs.dconf.enable = true;
 
   # List packages installed in system profile. To search, run:
   # $ nix search wget
-  environment.systemPackages = with pkgs; [
+#  environment.systemPackages = with pkgs; [
   #  vim # Do not forget to add an editor to edit configuration.nix! The Nano editor is also installed by default.
   #  wget
-  virt-manager 
-  emacs29-pgtk
-  zsh 
-  neovim
-  ntfs3g
-  gnomeExtensions.dash-to-dock
-  gnomeExtensions.appindicator
-  gnomeExtensions.caffeine
-  gnomeExtensions.openweather
-  x264 
-  ffmpeg_6-full
-  gnome.gnome-settings-daemon 
-  xdg-desktop-portal 
-  xdg-desktop-portal-gtk
-  ];
-nix.gc = {
-  automatic = true;
-  dates = "weekly";
-  options = "--delete-older-than 30d";
-};
-nixpkgs.config.packageOverrides = pkgs: {
-    vaapiIntel = pkgs.vaapiIntel.override { enableHybridCodec = true; };
-  };
-  hardware.opengl = {
-    enable = true;
-    extraPackages = with pkgs; [
-      intel-media-driver # LIBVA_DRIVER_NAME=iHD
-      vaapiIntel         # LIBVA_DRIVER_NAME=i965 (older but works better for Firefox/Chromium)
-      vaapiVdpau
-      libvdpau-va-gl
-    ];
-  };
+#  ];
 
   # Some programs need SUID wrappers, can be configured further or are
   # started in user sessions.
@@ -192,23 +132,5 @@ nixpkgs.config.packageOverrides = pkgs: {
   # this value at the release version of the first install of this system.
   # Before changing this value read the documentation for this option
   # (e.g. man configuration.nix or on https://nixos.org/nixos/options.html).
-  system.stateVersion = "23.05"; # Did you read the comment?
-   boot.kernelPackages = pkgs.linuxPackages_hardened;
-   services.flatpak.enable = true;
-   security.apparmor.enable = true;
-   security.chromiumSuidSandbox.enable = true;
-     networking.firewall.allowedTCPPorts = [];
-  networking.firewall.allowedUDPPorts = [];
-
-programs.gnupg.agent = {                                                      
-  enable = true;
-  enableSSHSupport = true;
-  pinentryFlavor = "gnome3";
-};
-
-home-manager.users.user = { pkgs, ... }: {
-  home.packages = [  ];
-  home.stateVersion = "23.05"; 
-  dconf.settings."org/gnome/desktop/wm/preferences".button-layout = ":minimize,maximize,close";
-  };
+  system.stateVersion = "23.11"; # Did you read the comment?
 }
