@@ -12,12 +12,17 @@
   ffmpeg_6-full
   xdg-desktop-portal
   xdg-desktop-portal-gtk
+  xdg-desktop-portal-gnome
+  libsForQt5.xdg-desktop-portal-kde
+  libsForQt5.yakuake
   cifs-utils
   flatpak
   jdk17
   i2p
   pinentry-qt
   plasma-browser-integration
+  evolution
+  evolution-ews
   ];
 
 nix.gc = {
@@ -37,11 +42,18 @@ nix.gc = {
   };
   boot.kernelPackages = pkgs.linuxPackages_latest;
   services.flatpak.enable = true;
+    xdg.portal = {
+    enable = true;
+    extraPortals = with pkgs; [
+      xdg-desktop-portal-kde
+      xdg-desktop-portal-gtk
+    ];
+    };
   security.apparmor.enable = true;
   security.chromiumSuidSandbox.enable = true;
   networking.firewall.allowedTCPPorts = [];
   networking.firewall.allowedUDPPorts = [];
-
+  services.earlyoom.enable = true;
 programs.gnupg.agent = {                                                      
   enable = true;
   enableSSHSupport = true;
@@ -65,5 +77,8 @@ services.pcscd.enable = true;
 
     in ["${automount_opts},credentials=/etc/nixos/smb-secrets"];
   };
+fonts.fontDir.enable = true;
 
+  hardware.bluetooth.enable = true; # enables support for Bluetooth
+  hardware.bluetooth.powerOnBoot = true; # powers up the default Bluetooth controller on boot
 }
